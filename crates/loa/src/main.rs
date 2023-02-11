@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, env, fs, time::Instant};
+use std::{collections::HashMap, env, fs};
+
 
 struct Task {
     name: String,
@@ -76,7 +77,7 @@ fn try_main() -> anyhow::Result<()> {
 
 //------------------------------------------------------------------------------
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Config {
     general: General,
     #[serde(rename = "Environment")]
@@ -91,17 +92,23 @@ impl Config {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct General {
     path_to_polars_csv: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Environment {
     name: String,
 }
 
 const CONFIG_FILE_NAME: &str = "config.toml";
+const DEFAULT_CONFIG: &str = r#"# Default config
+[general]
+path_to_polars_csv = "./polars.csv"
+
+[Environment]
+name = "development""#;
 
 /// With `config_manager` easily access and modify the frequently used features of your application through the config.toml file.
 ///
@@ -128,6 +135,7 @@ fn config_manager() -> anyhow::Result<()> {
     {
         let curr_dir = env::current_dir().unwrap();
         let path = curr_dir.join(CONFIG_FILE_NAME);
+
         let config = match fs::read_to_string(&path) {
             Ok(t) => t,
             Err(e) => {
@@ -136,16 +144,12 @@ fn config_manager() -> anyhow::Result<()> {
                     path.to_string_lossy(),
                     anyhow::anyhow!(e)
                 );
-                r#"[general]
-path_to_polars_csv = "./polars.csv"
-
-[Environment]
-name = "development""#
-                    .to_string()
+                String::from(DEFAULT_CONFIG)
             }
         };
 
         let mut config: Config = toml::from_str(&config).unwrap();
+        println!("{config:#?}");
         let path_to_polars_csv = &config.general.path_to_polars_csv.clone();
         let env_name = &config.environment.name.clone();
         println!("Path to polars csv: {}", path_to_polars_csv);
@@ -153,7 +157,7 @@ name = "development""#
 
         config.update_config(&Config {
             general: General {
-                path_to_polars_csv: format!("./{now:?}polars.csv", now = Instant::now()),
+                path_to_polars_csv: "./polars.csv".to_string(),
             },
             environment: Environment {
                 name: "development".to_string(),
