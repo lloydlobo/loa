@@ -101,12 +101,41 @@ struct Environment {
     name: String,
 }
 
-const CONFIG_PATH: &str = "crates/loa/src/config.toml";
+const CONFIG_FILE_NAME: &str = "config.toml";
+
 /// With `config_manager` easily access and modify the frequently used features of your application through the config.toml file.
+///
+/// With this approach, you can access the individual values by using the dot notation (e.g., config.General.path_to_polars_csv).
+//
+// let config: toml::Value = toml::from_str(include_str!("config.toml")).unwrap();
+// let path_to_polars_csv = config["general"]["path_to_polars_csv"].as_str().unwrap();
+// let env_name = config["Environment"]["name"].as_str().unwrap();
+// println!("Path to polars csv: {}", path_to_polars_csv);
+// println!("Environment name: {}", env_name);
 fn config_manager() -> anyhow::Result<()> {
     {
-        // With this approach, you can access the individual values by using the dot notation (e.g., config.General.path_to_polars_csv).
-        let mut config: Config = toml::from_str(include_str!("config.toml")).unwrap();
+        let curr_dir = env::current_dir().unwrap();
+        let path = curr_dir.join(CONFIG_FILE_NAME);
+        let config = match fs::read_to_string(&path) {
+            Ok(t) => t,
+            Err(e) => {
+                eprintln!(
+                    "Creating default config. {} not found: {}",
+                    path.to_string_lossy(),
+                    anyhow::anyhow!(e)
+                );
+                r#"[general]
+path_to_polars_csv = "./polars.csv"
+
+[Environment]
+name = "development""#
+                    .to_string()
+            }
+        };
+        dbg!(&curr_dir, &path);
+
+        // let mut config: Config = toml::from_str(include_str!("config.toml")).unwrap();
+        let mut config: Config = toml::from_str(&config).unwrap();
         let path_to_polars_csv = &config.general.path_to_polars_csv.clone();
         let env_name = &config.environment.name.clone();
         println!("Path to polars csv: {}", path_to_polars_csv);
@@ -121,19 +150,10 @@ fn config_manager() -> anyhow::Result<()> {
             },
         });
 
-        let curr_dir = env::current_dir().unwrap().join(CONFIG_PATH);
-        dbg!(&curr_dir);
-
         // Serialize the `Config` struct to a TOML string.
         let config = toml::to_string(&config).unwrap();
-        fs::write(curr_dir, config).unwrap();
+        fs::write(path, config).unwrap();
     }
-    let config: toml::Value = toml::from_str(include_str!("config.toml")).unwrap();
-    let path_to_polars_csv = config["general"]["path_to_polars_csv"].as_str().unwrap();
-    let env_name = config["Environment"]["name"].as_str().unwrap();
-
-    println!("Path to polars csv: {}", path_to_polars_csv);
-    println!("Environment name: {}", env_name);
 
     Ok(())
 }
