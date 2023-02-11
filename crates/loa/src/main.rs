@@ -15,6 +15,14 @@ impl App {
             tasks: HashMap::new(),
         }
     }
+
+    fn add_task(&mut self, name: &str, priority: i32) {
+        let task = Task {
+            name: name.to_string(),
+            priority,
+        };
+        self.tasks.insert(name.to_string(), task);
+    }
 }
 
 fn main() {
