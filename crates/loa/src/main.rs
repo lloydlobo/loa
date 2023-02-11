@@ -27,6 +27,17 @@ impl App {
     fn remove_task(&mut self, name: &str) {
         self.tasks.remove(name);
     }
+
+    fn display_tasks(&self) {
+        let mut task_names: Vec<&String> = self.tasks.keys().collect();
+        task_names.sort_by(|a, b| self.tasks[*b].priority.cmp(&self.tasks[*a].priority));
+        println!("Tasks (by priority): ");
+
+        for name in task_names {
+            let task = &self.tasks[name];
+            println!("{}: {}", task.name, task.priority);
+        }
+    }
 }
 
 fn main() {
