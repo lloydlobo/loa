@@ -106,6 +106,18 @@ const CONFIG_FILE_NAME: &str = "config.toml";
 /// With `config_manager` easily access and modify the frequently used features of your application through the config.toml file.
 ///
 /// With this approach, you can access the individual values by using the dot notation (e.g., config.General.path_to_polars_csv).
+///
+/// This code takes the following steps:
+///
+/// * Determines the current directory with env::current_dir()
+/// * Joins the current directory with CONFIG_FILE_NAME to get the full path to the config.toml file
+/// * Reads the content of the config.toml file with fs::read_to_string(). If the file does not exist, a default config is created.
+/// * Parses the content of the config.toml file with toml::from_str() into a Config struct
+/// * Prints the values of the path_to_polars_csv and env_name fields from the Config struct
+/// * Updates the Config struct with new values
+/// * Serializes the updated Config struct to a TOML string with toml::to_string()
+/// * Writes the serialized Config string back to the config.toml file with fs::write()
+/// * Returns Ok(()) to indicate success.
 //
 // let config: toml::Value = toml::from_str(include_str!("config.toml")).unwrap();
 // let path_to_polars_csv = config["general"]["path_to_polars_csv"].as_str().unwrap();
@@ -132,9 +144,7 @@ name = "development""#
                     .to_string()
             }
         };
-        dbg!(&curr_dir, &path);
 
-        // let mut config: Config = toml::from_str(include_str!("config.toml")).unwrap();
         let mut config: Config = toml::from_str(&config).unwrap();
         let path_to_polars_csv = &config.general.path_to_polars_csv.clone();
         let env_name = &config.environment.name.clone();
