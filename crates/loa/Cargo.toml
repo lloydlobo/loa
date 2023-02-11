@@ -10,6 +10,10 @@ debug = false # CARGO_PROFILE_RELEASE_DEBUG=true
 
 [dependencies]
 anyhow = "1.0.69"
+csv = "1.1.6"
+dialoguer = "0.10.3"
+polars = "0.27.2"
+toml = "0.7.2"
 # anyhow = "1.0.69"
 # crossbeam = "0.8.2"
 # dotenv = "0.15.0"
