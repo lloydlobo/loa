@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, env, fs, time::Instant};
 
-
 struct Task {
     name: String,
     priority: i32,
@@ -124,9 +123,9 @@ fn config_manager() -> anyhow::Result<()> {
 
         let curr_dir = env::current_dir().unwrap().join(CONFIG_PATH);
         dbg!(&curr_dir);
+
         // Serialize the `Config` struct to a TOML string.
         let config = toml::to_string(&config).unwrap();
-
         fs::write(curr_dir, config).unwrap();
     }
     let config: toml::Value = toml::from_str(include_str!("config.toml")).unwrap();
