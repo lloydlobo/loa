@@ -34,13 +34,13 @@ impl App {
         println!(
             r#"
 |-------------------------------
-|  id  |  Tasks (by priority): 
+| id |  Tasks (by priority): 
 |-------------------------------"#
         );
 
         for (i, name) in task_names.iter().enumerate() {
             let task = &self.tasks[*name];
-            println!("|  {i:#2?}  | {}: {}", task.name, task.priority);
+            println!("| {i:#2?} | {}: {}", task.priority, task.name,);
         }
         println!(r#"|-------------------------------"#);
     }
