@@ -1,0 +1,5 @@
+[general]
+path_to_polars_csv = "./polars.csv"
+
+[Environment]
+name = "development"
