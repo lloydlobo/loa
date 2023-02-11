@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, env, fs, time::Instant};
-use toml;
+
 
 struct Task {
     name: String,
@@ -87,8 +87,8 @@ struct Config {
 impl Config {
     /// Update the values in the Config struct.
     fn update_config(&mut self, other: &Config) {
-        self.general.path_to_polars_csv = String::from(other.general.path_to_polars_csv.to_owned());
-        self.environment.name = String::from(other.environment.name.to_owned());
+        self.general.path_to_polars_csv = other.general.path_to_polars_csv.to_owned();
+        self.environment.name = other.environment.name.to_owned();
     }
 }
 
