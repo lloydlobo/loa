@@ -23,6 +23,10 @@ impl App {
         };
         self.tasks.insert(name.to_string(), task);
     }
+
+    fn remove_task(&mut self, name: &str) {
+        self.tasks.remove(name);
+    }
 }
 
 fn main() {
