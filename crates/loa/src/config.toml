@@ -1,0 +1,5 @@
+[general]
+path_to_polars_csv = "./Instant { tv_sec: 10818, tv_nsec: 207390037 }polars.csv"
+
+[Environment]
+name = "development"
